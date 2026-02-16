@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getUploadUrl, uploadFileToR2, deleteVideo, getVideoInfo } from '../utils/api.js'
+import { getUploadUrl, uploadFileToR2, deleteVideo, getVideoInfo, transcodeVideo } from '../utils/api.js'
 
 function UploadPage() {
   const navigate = useNavigate()
@@ -130,11 +130,18 @@ function UploadPage() {
         })
       }
 
+      // Step 4: Transcode if MKV (browser can't play MKV audio codecs)
+      if (videoFile && videoFile.name.toLowerCase().endsWith('.mkv')) {
+        setStatusText('Transcoding audio for browser compatibility...')
+        setProgress(0)
+        await transcodeVideo()
+      }
+
       setStatusText('Upload complete!')
       setProgress(100)
 
       // Navigate to watch page after a brief delay
-      setTimeout(() => navigate('/'), 1000)
+      setTimeout(() => navigate('/'), 1500)
     } catch (err) {
       console.error('Upload failed:', err)
       setError(err.message || 'Upload failed. Please try again.')

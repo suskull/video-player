@@ -66,3 +66,16 @@ export async function deleteVideo() {
     if (!res.ok) throw new Error('Failed to delete video');
     return res.json();
 }
+
+/**
+ * Transcode the current video's audio to AAC for browser compatibility.
+ * This may take a while for large files.
+ */
+export async function transcodeVideo() {
+    const res = await fetch(`${API_BASE}/api/transcode`, { method: 'POST' });
+    if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Transcoding failed');
+    }
+    return res.json();
+}
