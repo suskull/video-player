@@ -87,32 +87,34 @@ function UploadPage() {
   }
 
   async function handleUpload() {
-    if (!videoFile) return
+    if (!videoFile && !subtitleFile) return
 
     try {
       setUploading(true)
       setError(null)
       setProgress(0)
 
-      // Step 1: Delete existing video if any
-      if (existingVideo) {
+      // Step 1: Delete existing video if uploading a new one
+      if (videoFile && existingVideo) {
         setStatusText('Removing previous video...')
         await deleteVideo()
       }
 
-      // Step 2: Upload video
-      setStatusText('Preparing video upload...')
-      const videoContentType = videoFile.type || 'video/mp4'
-      const { uploadUrl: videoUploadUrl } = await getUploadUrl(
-        videoFile.name,
-        videoContentType,
-        'video'
-      )
+      // Step 2: Upload video (if selected)
+      if (videoFile) {
+        setStatusText('Preparing video upload...')
+        const videoContentType = videoFile.type || 'video/mp4'
+        const { uploadUrl: videoUploadUrl } = await getUploadUrl(
+          videoFile.name,
+          videoContentType,
+          'video'
+        )
 
-      setStatusText('Uploading video...')
-      await uploadFileToR2(videoUploadUrl, videoFile, (pct) => {
-        setProgress(pct)
-      })
+        setStatusText('Uploading video...')
+        await uploadFileToR2(videoUploadUrl, videoFile, (pct) => {
+          setProgress(pct)
+        })
+      }
 
       // Step 3: Upload subtitle if provided
       if (subtitleFile) {
@@ -266,9 +268,9 @@ function UploadPage() {
       <button
         className="btn btn-primary btn-upload"
         onClick={handleUpload}
-        disabled={!videoFile || uploading}
+        disabled={(!videoFile && !subtitleFile) || uploading}
       >
-        {uploading ? 'Uploading...' : 'Upload & Share'}
+        {uploading ? 'Uploading...' : videoFile ? 'Upload & Share' : 'Upload Subtitle'}
       </button>
     </div>
   )

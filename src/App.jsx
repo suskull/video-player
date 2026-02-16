@@ -8,7 +8,7 @@ function App() {
       <header className="app-header">
         <a href="/" className="logo">
           <span className="logo-icon">▶</span>
-          <span className="logo-text">VideoShare</span>
+          <span className="logo-text">ToNhu</span>
         </a>
         <nav className="nav-links">
           <a href="/" className="nav-link">Watch</a>

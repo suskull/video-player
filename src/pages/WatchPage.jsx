@@ -1,4 +1,6 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
+import { Plyr } from 'plyr-react'
+import 'plyr-react/plyr.css'
 import { getVideoInfo } from '../utils/api.js'
 import { fetchAndConvertSrt } from '../utils/subtitleParser.js'
 
@@ -7,7 +9,30 @@ function WatchPage() {
   const [subtitleUrl, setSubtitleUrl] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const videoRef = useRef(null)
+  const plyrRef = useRef(null)
+
+  const plyrOptions = useMemo(() => ({
+    captions: { active: true, update: true },
+    controls: [
+      'play-large',
+      'rewind',
+      'play',
+      'fast-forward',
+      'progress',
+      'current-time',
+      'duration',
+      'mute',
+      'volume',
+      'captions',
+      'settings',
+      'pip',
+      'airplay',
+      'fullscreen',
+    ],
+    settings: ['captions', 'quality', 'speed'],
+    speed: { selected: 1, options: [0.5, 0.75, 1, 1.25, 1.5, 2] },
+    keyboard: { focused: true, global: true },
+  }), [])
 
   useEffect(() => {
     loadVideo()
@@ -99,26 +124,26 @@ function WatchPage() {
   return (
     <div className="watch-page">
       <div className="video-container">
-        <video
-          ref={videoRef}
-          className="video-player"
-          controls
-          autoPlay
+        <Plyr
+          ref={plyrRef}
+          source={{
+            type: 'video',
+            sources: [{ src: videoData.video.url }],
+            tracks: subtitleUrl
+              ? [
+                  {
+                    kind: 'captions',
+                    label: 'Subtitles',
+                    srcLang: 'en',
+                    src: subtitleUrl,
+                    default: true,
+                  },
+                ]
+              : [],
+          }}
+          options={plyrOptions}
           crossOrigin="anonymous"
-          key={videoData.video.url}
-        >
-          <source src={videoData.video.url} />
-          {subtitleUrl && (
-            <track
-              kind="subtitles"
-              src={subtitleUrl}
-              srcLang="en"
-              label="Subtitles"
-              default
-            />
-          )}
-          Your browser does not support the video tag.
-        </video>
+        />
       </div>
 
       <div className="video-info">

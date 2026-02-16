@@ -232,11 +232,18 @@ body {
   border: 1px solid var(--border-color);
 }
 
-.video-player {
-  width: 100%;
-  display: block;
+.video-container .plyr {
+  --plyr-color-main: var(--accent);
+  --plyr-video-background: #000;
+  --plyr-menu-background: var(--bg-card);
+  --plyr-menu-color: var(--text-primary);
+  --plyr-tooltip-background: var(--bg-card);
+  --plyr-tooltip-color: var(--text-primary);
+  border-radius: 0;
+}
+
+.video-container .plyr video {
   max-height: 80vh;
-  background: #000;
 }
 
 .video-info {

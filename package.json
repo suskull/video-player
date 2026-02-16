@@ -9,6 +9,8 @@
         "preview": "vite preview"
     },
     "dependencies": {
+        "plyr": "^3.8.4",
+        "plyr-react": "^6.0.0",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
         "react-router-dom": "^7.1.0"
